@@ -375,9 +375,10 @@ function selectDay(d){
 
 function renderEventList(){
   const list=document.getElementById('event-list');list.innerHTML='';
-  const shown=selectedDate
+  const shown=(selectedDate
     ?allEvents.filter(e=>e.date===selectedDate)
-    :allEvents.filter(e=>{const[y,m]=e.date.split('-').map(Number);return y===viewYear&&m===viewMonth+1;});
+    :allEvents.filter(e=>{const[y,m]=e.date.split('-').map(Number);return y===viewYear&&m===viewMonth+1;}))
+    .sort((a,b)=>a.date.localeCompare(b.date));
   if(!shown.length){
     const p=document.createElement('p');p.className='no-events';
     p.textContent=selectedDate?'No events on this day.':'No events this month.';
