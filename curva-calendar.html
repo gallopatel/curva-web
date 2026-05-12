@@ -13,7 +13,8 @@
   --bg:#00017F;--card-bg:rgba(255,255,255,0.09);--card-hover:rgba(255,255,255,0.14);
   --card-border:rgba(255,255,255,0.18);--yellow:#F5C518;--red:#C8001E;
   --text:#FFFFFF;--text-muted:rgba(255,255,255,0.68);--text-dim:rgba(255,255,255,0.38);
-  --cat-match:#F5C518;--cat-music:#C084FC;--cat-special:#4ADE80;--cat-worldcup:#FF4060;
+  --cat-match:#F5C518;--cat-music:#C084FC;--cat-special:#4ADE80;
+  --cat-worldcup:#FF4060;--cat-private:#60C4FF;
 }
 html,body{background:var(--bg)}
 body{font-family:'Outfit',sans-serif;color:var(--text);min-height:100dvh;
@@ -29,20 +30,41 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;height:4px;
 .page{position:relative;z-index:1;width:100%;max-width:440px;
   padding:0 1.25rem;display:flex;flex-direction:column;align-items:center}
 
-/* top bar */
+/* ── top bar ── */
 .topbar{width:100%;display:flex;align-items:center;justify-content:center;
   padding:1.6rem 0 0}
 .page-title{font-size:.72rem;font-weight:600;letter-spacing:.2em;
   text-transform:uppercase;color:var(--yellow);opacity:.9}
 
-/* legend */
+/* ── hours block ── */
+.hours-block{width:100%;margin:1.25rem 0 0;
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);
+  border-radius:14px;overflow:hidden}
+.hours-header{display:flex;align-items:center;justify-content:space-between;
+  padding:.75rem 1rem .6rem;border-bottom:1px solid rgba(255,255,255,0.1)}
+.hours-title{font-size:.72rem;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--yellow);opacity:.9}
+.hours-week{font-size:.68rem;font-weight:300;color:var(--text-dim)}
+.hours-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.hours-row{display:flex;align-items:center;justify-content:space-between;
+  padding:.42rem 1rem;border-bottom:1px solid rgba(255,255,255,0.06)}
+.hours-row:last-child{border-bottom:none}
+.hours-row.today-row{background:rgba(245,197,24,0.08)}
+.hours-row.closed-row .hours-time{color:var(--text-dim);font-style:italic}
+.hours-day{font-size:.75rem;font-weight:500;color:var(--text-muted)}
+.hours-row.today-row .hours-day{color:var(--yellow);font-weight:600}
+.hours-time{font-size:.75rem;font-weight:400;color:var(--text)}
+.hours-loading{padding:1rem;text-align:center;font-size:.78rem;
+  color:var(--text-dim);font-style:italic;animation:pulse 1.5s infinite}
+
+/* ── legend ── */
 .cal-legend{display:flex;flex-wrap:wrap;gap:.45rem .85rem;
   margin:1.3rem 0 .6rem;padding:0 2px;width:100%}
 .legend-item{display:flex;align-items:center;gap:5px;font-size:.62rem;
   font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim)}
 .legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 
-/* calendar header */
+/* ── calendar header ── */
 .cal-header{display:flex;align-items:center;justify-content:space-between;
   padding:.5rem 0 .9rem;width:100%}
 .cal-month-title{font-size:1.05rem;font-weight:600;letter-spacing:.02em}
@@ -54,7 +76,7 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;height:4px;
   transition:background .15s,color .15s;font-family:'Outfit',sans-serif}
 .cal-nav button:hover{background:rgba(255,255,255,0.16);color:#fff}
 
-/* grid */
+/* ── grid ── */
 .cal-grid{width:100%;display:grid;grid-template-columns:repeat(7,1fr);gap:3px;
   margin-bottom:1.1rem}
 .cal-dow{text-align:center;font-size:.6rem;font-weight:600;letter-spacing:.12em;
@@ -72,7 +94,7 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;height:4px;
 .dot-row{display:flex;gap:2px;justify-content:center}
 .evt-dot{width:4px;height:4px;border-radius:50%;display:block}
 
-/* event cards */
+/* ── event cards ── */
 .event-list{display:flex;flex-direction:column;gap:.5rem;width:100%;margin-bottom:.5rem}
 .event-card{display:flex;gap:12px;align-items:flex-start;
   padding:13px 14px 13px 16px;
@@ -110,11 +132,24 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;height:4px;
     <span class="page-title">Events</span>
   </div>
 
+  <!-- HOURS BLOCK -->
+  <div class="hours-block">
+    <div class="hours-header">
+      <span class="hours-title">This week's hours</span>
+      <span class="hours-week" id="hours-week-range"></span>
+    </div>
+    <div id="hours-body">
+      <div class="hours-loading">Loading hours…</div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
   <div class="cal-legend">
     <span class="legend-item"><span class="legend-dot" style="background:var(--cat-match)"></span>Match day</span>
     <span class="legend-item"><span class="legend-dot" style="background:var(--cat-music)"></span>Music / DJ</span>
     <span class="legend-item"><span class="legend-dot" style="background:var(--cat-special)"></span>Special</span>
     <span class="legend-item"><span class="legend-dot" style="background:var(--cat-worldcup)"></span>World Cup / UCL</span>
+    <span class="legend-item"><span class="legend-dot" style="background:var(--cat-private)"></span>Private event</span>
   </div>
 
   <div class="cal-header">
@@ -133,15 +168,38 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;height:4px;
 <script>
 // ═══════════════════════════════════════════════════════════════
 //  GOOGLE SHEETS CONNECTION
-//  1. Create a Google Sheet with columns:
-//     Date | Title | Category | Time | Description | Link
-//  2. File → Share → Publish to web → CSV → Sheet1 → Publish
-//  3. Paste the URL below, replacing the placeholder
 //
-//  Category values: match | music | special | worldcup
+//  SHEET 1 — Events (tab named "Events")
+//  Columns: Date | Title | Category | Time | Description | Link
+//  Category values: match | music | special | worldcup | private
 //  Date format: YYYY-MM-DD
+//
+//  SHEET 2 — Hours (tab named "Hours")
+//  Columns: Day | Open | Close
+//  Day values: Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday
+//  Use "Closed" in the Open column for days you're not open.
+//  Update this sheet each week to reflect current hours.
+//
+//  HOW TO GET THE CSV URLS:
+//  File → Share → Publish to web → select the tab → CSV → Publish
+//  You need TWO separate published CSV URLs, one per tab.
 // ═══════════════════════════════════════════════════════════════
-const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQlnvGdph2Y_jYWCnQ-OZcH7TGwFuNvLJ76DjwJlxc9eSj5ySerbDV3ae1eQu3_xbJYnpYXUeNjpbS8/pub?gid=0&single=true&output=csv';
+
+const EVENTS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQlnvGdph2Y_jYWCnQ-OZcH7TGwFuNvLJ76DjwJlxc9eSj5ySerbDV3ae1eQu3_xbJYnpYXUeNjpbS8/pub?gid=0&single=true&output=csv';
+
+// Replace with your published Hours tab CSV URL:
+const HOURS_CSV_URL  = 'YOUR_HOURS_TAB_CSV_URL_HERE';
+
+// ── Demo fallback hours (shown until sheet is connected) ───────
+const DEMO_HOURS = [
+  {day:'Monday',    open:'Closed', close:''},
+  {day:'Tuesday',   open:'Closed', close:''},
+  {day:'Wednesday', open:'12:00',  close:'22:00'},
+  {day:'Thursday',  open:'12:00',  close:'22:00'},
+  {day:'Friday',    open:'14:00',  close:'23:00'},
+  {day:'Saturday',  open:'12:00',  close:'23:00'},
+  {day:'Sunday',    open:'12:00',  close:'21:00'},
+];
 
 const DEMO_EVENTS = [
   {date:'2026-05-20',title:'Grand Opening Party',      category:'special',  time:'18:00',desc:'Doors open. Free entry. Live DJ.'},
@@ -164,17 +222,20 @@ const CAT = {
   music:    {color:'#C084FC',label:'Music / DJ',       bg:'rgba(192,132,252,0.16)', tc:'#C084FC'},
   special:  {color:'#4ADE80',label:'Special Event',    bg:'rgba(74,222,128,0.16)',  tc:'#4ADE80'},
   worldcup: {color:'#FF4060',label:'World Cup / UCL',  bg:'rgba(255,64,96,0.16)',   tc:'#FF4060'},
+  private:  {color:'#60C4FF',label:'Private Event',    bg:'rgba(96,196,255,0.16)',  tc:'#60C4FF'},
 };
 
-const MONTHS = ['January','February','March','April','May','June',
-                'July','August','September','October','November','December'];
-const DAYS   = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+const MONTHS   = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+const DAYS     = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+const DAY_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 let allEvents  = [];
 let viewYear   = new Date().getFullYear();
 let viewMonth  = new Date().getMonth();
 let selectedDate = null;
 
+// ── CSV parser ─────────────────────────────────────────────────
 function parseCSV(csv) {
   const lines = csv.trim().split('\n').slice(1);
   return lines.map(line => {
@@ -185,24 +246,78 @@ function parseCSV(csv) {
       else cur+=line[i];
     }
     cols.push(cur.trim());
-    return {date:cols[0]||'',title:cols[1]||'',
-             category:(cols[2]||'special').toLowerCase(),
-             time:cols[3]||'',desc:cols[4]||'',link:cols[5]||''};
-  }).filter(e=>e.date&&e.title);
+    return cols;
+  }).filter(r=>r.length&&r[0]);
 }
 
+// ── Week range label ───────────────────────────────────────────
+function weekRangeLabel() {
+  const now   = new Date();
+  const dow   = now.getDay(); // 0=Sun
+  const mon   = new Date(now); mon.setDate(now.getDate() - ((dow+6)%7));
+  const sun   = new Date(mon); sun.setDate(mon.getDate()+6);
+  const fmt   = d => `${MONTHS[d.getMonth()].slice(0,3)} ${d.getDate()}`;
+  return `${fmt(mon)} – ${fmt(sun)}`;
+}
+
+// ── Render hours ───────────────────────────────────────────────
+function renderHours(rows) {
+  const todayName = DAY_FULL[new Date().getDay()];
+  document.getElementById('hours-week-range').textContent = weekRangeLabel();
+
+  // Build lookup from parsed rows
+  const lookup = {};
+  rows.forEach(r => { if(r[0]) lookup[r[0].trim()] = {open:r[1]||'',close:r[2]||''}; });
+
+  const order = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  let html = '';
+  order.forEach(day => {
+    const h       = lookup[day] || {open:'Closed',close:''};
+    const closed  = h.open.toLowerCase()==='closed'||!h.open;
+    const isToday = day===todayName;
+    const time    = closed ? 'Closed' : `${h.open}${h.close?' – '+h.close:''}`;
+    html += `<div class="hours-row${isToday?' today-row':''}${closed?' closed-row':''}">
+      <span class="hours-day">${day}</span>
+      <span class="hours-time">${time}</span>
+    </div>`;
+  });
+  document.getElementById('hours-body').innerHTML = html;
+}
+
+// ── Load hours from sheet ──────────────────────────────────────
+async function loadHours() {
+  if(!HOURS_CSV_URL||HOURS_CSV_URL==='YOUR_HOURS_TAB_CSV_URL_HERE'){
+    renderHours(DEMO_HOURS.map(h=>[h.day,h.open,h.close]));
+    return;
+  }
+  try {
+    const res  = await fetch(HOURS_CSV_URL);
+    const rows = parseCSV(await res.text());
+    renderHours(rows);
+  } catch(e) {
+    renderHours(DEMO_HOURS.map(h=>[h.day,h.open,h.close]));
+  }
+}
+
+// ── Load events from sheet ─────────────────────────────────────
 async function loadEvents() {
-  if(!SHEET_CSV_URL||SHEET_CSV_URL==='YOUR_PUBLISHED_SHEET_CSV_URL_HERE'){
+  if(!EVENTS_CSV_URL||EVENTS_CSV_URL==='YOUR_EVENTS_TAB_CSV_URL_HERE'){
     allEvents=DEMO_EVENTS; renderCalendar(); return;
   }
   document.getElementById('event-list').innerHTML='<p class="cal-loading">Loading events…</p>';
-  try{
-    const res=await fetch(SHEET_CSV_URL);
-    allEvents=parseCSV(await res.text());
-  }catch(e){allEvents=DEMO_EVENTS;}
+  try {
+    const res  = await fetch(EVENTS_CSV_URL);
+    const rows = parseCSV(await res.text());
+    allEvents  = rows.map(r=>({
+      date:r[0]||'', title:r[1]||'',
+      category:(r[2]||'special').toLowerCase(),
+      time:r[3]||'', desc:r[4]||'', link:r[5]||''
+    })).filter(e=>e.date&&e.title);
+  } catch(e) { allEvents=DEMO_EVENTS; }
   renderCalendar();
 }
 
+// ── Calendar render ────────────────────────────────────────────
 function eventsOnDay(y,m,d){
   const s=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
   return allEvents.filter(e=>e.date===s);
@@ -296,6 +411,8 @@ function changeMonth(dir){
   selectedDate=null;renderCalendar();
 }
 
+// kick off both loads in parallel
+loadHours();
 loadEvents();
 </script>
 </body>
