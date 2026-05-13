@@ -6,413 +6,428 @@
 <title>Curva — Events</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#00017F;--card-bg:rgba(255,255,255,0.09);--card-hover:rgba(255,255,255,0.14);
-  --card-border:rgba(255,255,255,0.18);--yellow:#F5C518;--red:#C8001E;
-  --text:#FFFFFF;--text-muted:rgba(255,255,255,0.68);--text-dim:rgba(255,255,255,0.38);
+  --navy:#00017F;--yellow:#F5C518;--red:#C8001E;
   --cat-match:#F5C518;--cat-music:#C084FC;--cat-special:#4ADE80;
   --cat-worldcup:#FF4060;--cat-private:#60C4FF;
 }
-html,body{background:var(--bg)}
-body{font-family:'Outfit',sans-serif;color:var(--text);min-height:100dvh;
-  display:flex;flex-direction:column;align-items:center;
-  padding:0 0 4rem;position:relative;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;
+html,body{height:100%;background:var(--navy)}
+body{font-family:'Outfit',sans-serif;display:flex;flex-direction:column;
+  min-height:100vh;overflow-x:hidden}
+
+.hours-bar{background:#fff;border-bottom:1px solid #E0E4F4;
+  padding:10px 28px;display:flex;align-items:center;gap:20px;flex-shrink:0}
+.hb-label{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--navy);opacity:.4;white-space:nowrap;flex-shrink:0}
+.hb-week{font-size:10px;font-weight:300;color:#A0A8C0;white-space:nowrap;flex-shrink:0;margin-right:4px}
+.hb-cells{display:flex;flex:1;gap:0}
+.hb-cell{flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:2px 4px;border-right:1px solid #F0F2FA}
+.hb-cell:last-child{border-right:none}
+.hb-cell.today{background:#FFFBE8;border-radius:5px}
+.hb-day{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B0B8D0}
+.hb-cell.today .hb-day{color:#9B7200}
+.hb-time{font-size:11px;font-weight:600;color:var(--navy);white-space:nowrap}
+.hb-cell.today .hb-time{color:#9B7200}
+.hb-time.cl{color:#C8D0E0;font-style:italic;font-weight:300;font-size:10px}
+.hb-loading{font-size:11px;color:#A0A8C0;font-style:italic}
+
+.layout{display:grid;grid-template-columns:1fr 260px;flex:1}
+
+.main{background:var(--navy);padding:28px 30px 36px;
+  display:flex;flex-direction:column;gap:18px;position:relative;overflow-y:auto}
+.main::before{content:'';position:absolute;inset:0;
   background-image:repeating-linear-gradient(135deg,transparent,transparent 40px,
-  rgba(255,255,255,0.018) 40px,rgba(255,255,255,0.018) 41px);
+  rgba(255,255,255,0.015) 40px,rgba(255,255,255,0.015) 41px);
   pointer-events:none;z-index:0}
-body::after{content:'';position:fixed;top:0;left:0;right:0;height:4px;
-  background:linear-gradient(90deg,#010185 0% 33.3%,#F5C518 33.3% 66.6%,#C8001E 66.6% 100%);
-  z-index:100}
-.page{position:relative;z-index:1;width:100%;max-width:440px;
-  padding:0 1.25rem;display:flex;flex-direction:column;align-items:center}
+.main>*{position:relative;z-index:1}
 
-/* ── top bar ── */
-.topbar{width:100%;display:flex;align-items:center;justify-content:center;
-  padding:1.6rem 0 0}
-.page-title{font-size:.72rem;font-weight:600;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--yellow);opacity:.9}
-
-/* ── hours block ── */
-.hours-block{width:100%;margin:1.25rem 0 0;
-  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);
-  border-radius:14px;overflow:hidden}
-.hours-header{display:flex;align-items:center;justify-content:space-between;
-  padding:.75rem 1rem .6rem;border-bottom:1px solid rgba(255,255,255,0.1)}
-.hours-title{font-size:.72rem;font-weight:600;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--yellow);opacity:.9}
-.hours-week{font-size:.68rem;font-weight:300;color:var(--text-dim)}
-.hours-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
-.hours-row{display:flex;align-items:center;justify-content:space-between;
-  padding:.42rem 1rem;border-bottom:1px solid rgba(255,255,255,0.06)}
-.hours-row:last-child{border-bottom:none}
-.hours-row.today-row{background:rgba(245,197,24,0.08)}
-.hours-row.closed-row .hours-time{color:var(--text-dim);font-style:italic}
-.hours-day{font-size:.75rem;font-weight:500;color:var(--text-muted)}
-.hours-row.today-row .hours-day{color:var(--yellow);font-weight:600}
-.hours-time{font-size:.75rem;font-weight:400;color:var(--text)}
-.hours-loading{padding:1rem;text-align:center;font-size:.78rem;
-  color:var(--text-dim);font-style:italic;animation:pulse 1.5s infinite}
-
-/* ── legend ── */
-.cal-legend{display:flex;flex-wrap:wrap;gap:.45rem .85rem;
-  margin:1.3rem 0 .6rem;padding:0 2px;width:100%}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:.62rem;
-  font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim)}
-.legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-
-/* ── calendar header ── */
-.cal-header{display:flex;align-items:center;justify-content:space-between;
-  padding:.5rem 0 .9rem;width:100%}
-.cal-month-title{font-size:1.05rem;font-weight:600;letter-spacing:.02em}
-.cal-nav{display:flex;gap:4px}
+.cal-top{display:flex;align-items:center;justify-content:space-between}
+.cal-month-title{font-size:1.5rem;font-weight:700;color:#fff;letter-spacing:.02em}
+.cal-nav{display:flex;gap:6px}
 .cal-nav button{width:34px;height:34px;border-radius:8px;
-  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.16);
-  color:var(--text-muted);cursor:pointer;display:flex;align-items:center;
-  justify-content:center;font-size:1.15rem;line-height:1;
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);
+  color:rgba(255,255,255,0.7);cursor:pointer;font-size:1.2rem;line-height:1;
+  display:flex;align-items:center;justify-content:center;
   transition:background .15s,color .15s;font-family:'Outfit',sans-serif}
 .cal-nav button:hover{background:rgba(255,255,255,0.16);color:#fff}
 
-/* ── grid ── */
-.cal-grid{width:100%;display:grid;grid-template-columns:repeat(7,1fr);gap:3px;
-  margin-bottom:1.1rem}
-.cal-dow{text-align:center;font-size:.6rem;font-weight:600;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--text-dim);padding:3px 0 7px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-dow{text-align:center;font-size:9px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(255,255,255,0.28);padding:0 0 7px}
 .cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;border-radius:8px;font-size:.78rem;font-weight:400;
-  color:var(--text-dim);position:relative;transition:background .15s;gap:2px}
-.cal-day.other-month{opacity:.22}
-.cal-day.today{background:rgba(255,255,255,0.10);color:#fff;font-weight:600;
-  border:1px solid rgba(255,255,255,0.22)}
-.cal-day.has-event{cursor:pointer;color:#fff;font-weight:500}
-.cal-day.has-event:hover{background:rgba(255,255,255,0.11)}
-.cal-day.selected{background:rgba(255,255,255,0.17)!important;
-  color:#fff!important;border:1px solid rgba(255,255,255,0.38)}
+  justify-content:center;border-radius:7px;font-size:12px;font-weight:400;
+  color:rgba(255,255,255,0.2);gap:2px;transition:background .15s}
+.cal-day.cur-month{color:rgba(255,255,255,0.6)}
+.cal-day.has-event{color:#fff;font-weight:600;background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.13);cursor:pointer}
+.cal-day.has-event:hover{background:rgba(255,255,255,0.13)}
+.cal-day.today{background:#fff;color:var(--navy);font-weight:700;border:none}
+.cal-day.selected{background:rgba(245,197,24,0.2);
+  border:1.5px solid rgba(245,197,24,0.6);color:var(--yellow);font-weight:700}
 .dot-row{display:flex;gap:2px;justify-content:center}
 .evt-dot{width:4px;height:4px;border-radius:50%;display:block}
 
-/* ── event cards ── */
-.event-list{display:flex;flex-direction:column;gap:.5rem;width:100%;margin-bottom:.5rem}
-.event-card{display:flex;gap:12px;align-items:flex-start;
-  padding:13px 14px 13px 16px;
-  background:var(--card-bg);border:1px solid var(--card-border);
-  border-radius:11px;position:relative;overflow:hidden;
-  transition:background .18s,border-color .18s}
-.event-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:var(--ev-color,var(--yellow))}
-.event-card:hover{background:var(--card-hover);border-color:var(--ev-color,var(--yellow))}
-.ev-date-block{display:flex;flex-direction:column;align-items:center;min-width:34px}
-.ev-day{font-size:1.35rem;font-weight:600;line-height:1;color:var(--ev-color,var(--yellow))}
-.ev-mon{font-size:.58rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--text-dim);margin-top:1px}
-.ev-body{flex:1;min-width:0}
-.ev-title{font-size:.9rem;font-weight:500;margin-bottom:3px;color:#fff}
-.ev-meta{font-size:.73rem;font-weight:300;color:var(--text-muted);line-height:1.5}
-.ev-link{color:var(--ev-color,var(--yellow));font-size:.72rem;font-weight:500;
-  text-decoration:none;display:inline-block;margin-top:5px}
-.ev-link:hover{text-decoration:underline}
-.ev-badge{font-size:.58rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
-  padding:3px 8px;border-radius:20px;align-self:flex-start;white-space:nowrap;margin-top:1px}
-.no-events{text-align:center;font-size:.82rem;font-weight:300;font-style:italic;
-  color:var(--text-dim);padding:2.5rem 0;width:100%}
-.cal-loading{text-align:center;font-size:.82rem;font-weight:300;color:var(--text-dim);
-  padding:2rem 0;width:100%;animation:pulse 1.5s infinite}
+.sidebar{background:#fff;border-left:1px solid #E0E4F4;
+  padding:24px 18px;display:flex;flex-direction:column;gap:24px;overflow-y:auto}
+.s-title{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--navy);opacity:.4;margin-bottom:10px}
+.leg-list{display:flex;flex-direction:column;gap:9px}
+.leg-i{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:400;color:#5060A0}
+.leg-d{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.sb-list{display:flex;flex-direction:column;gap:7px}
+.sb-card{display:flex;gap:10px;align-items:flex-start;
+  padding:10px 11px 10px 13px;background:#F7F8FD;border:1px solid #E8EAF4;
+  border-radius:9px;position:relative;overflow:hidden;
+  transition:background .18s,border-color .18s}
+.sb-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--ec,var(--yellow))}
+.sb-card:hover{background:#EEEFFE;border-color:var(--ec,var(--yellow))}
+.sb-date{display:flex;flex-direction:column;align-items:center;min-width:26px}
+.sb-day{font-size:1.05rem;font-weight:700;line-height:1;color:var(--ec,var(--navy))}
+.sb-mon{font-size:.52rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:#A0A8C0;margin-top:1px}
+.sb-body{flex:1;min-width:0}
+.sb-name{font-size:.8rem;font-weight:600;color:var(--navy);margin-bottom:1px}
+.sb-meta{font-size:.68rem;font-weight:300;color:#8090B8;line-height:1.4}
+.sb-badge{font-size:.52rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 6px;border-radius:20px;align-self:flex-start;white-space:nowrap;margin-top:1px}
+.sb-none{font-size:.78rem;font-weight:300;font-style:italic;
+  color:#A0A8C0;padding:1rem 0;text-align:center}
+.ev-link{font-size:.68rem;font-weight:500;color:var(--ec,var(--navy));
+  text-decoration:none;display:inline-block;margin-top:3px}
+.ev-link:hover{text-decoration:underline}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{border-left:none;border-top:1px solid #E0E4F4}
+}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 </style>
 </head>
 <body>
-<div class="page">
 
-  <!-- HOURS BLOCK -->
-  <div class="hours-block">
-    <div class="hours-header">
-      <span class="hours-title">This week's hours</span>
-      <span class="hours-week" id="hours-week-range"></span>
+<div class="hours-bar">
+  <span class="hb-label">This week's hours</span>
+  <span class="hb-week" id="hours-week-range"></span>
+  <div class="hb-cells" id="hours-body"><span class="hb-loading">Loading…</span></div>
+</div>
+
+<div class="layout">
+  <main class="main">
+    <div class="cal-top">
+      <span class="cal-month-title" id="cal-title"></span>
+      <div class="cal-nav">
+        <button onclick="changeMonth(-1)">&#8249;</button>
+        <button onclick="changeMonth(1)">&#8250;</button>
+      </div>
     </div>
-    <div id="hours-body">
-      <div class="hours-loading">Loading hours…</div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </main>
+
+  <aside class="sidebar">
+    <div>
+      <div class="s-title" id="s-cat-title">Categories</div>
+      <div class="leg-list">
+        <div class="leg-i"><span class="leg-d" style="background:var(--cat-match)"></span><span>Match day</span></div>
+        <div class="leg-i"><span class="leg-d" style="background:var(--cat-music)"></span><span>Music / DJ</span></div>
+        <div class="leg-i"><span class="leg-d" style="background:var(--cat-special)"></span><span>Special event</span></div>
+        <div class="leg-i"><span class="leg-d" style="background:var(--cat-worldcup)"></span><span>World Cup / UCL</span></div>
+        <div class="leg-i"><span class="leg-d" style="background:var(--cat-private)"></span><span>Private event</span></div>
+      </div>
     </div>
-  </div>
-  
- <div class="topbar">
-    <span class="page-title">Events</span>
-  </div>
-  
-  <!-- LEGEND -->
-  <div class="cal-legend">
-    <span class="legend-item"><span class="legend-dot" style="background:var(--cat-match)"></span>Match day</span>
-    <span class="legend-item"><span class="legend-dot" style="background:var(--cat-music)"></span>Music / DJ</span>
-    <span class="legend-item"><span class="legend-dot" style="background:var(--cat-special)"></span>Special</span>
-    <span class="legend-item"><span class="legend-dot" style="background:var(--cat-worldcup)"></span>World Cup / UCL</span>
-    <span class="legend-item"><span class="legend-dot" style="background:var(--cat-private)"></span>Private event</span>
-  </div>
-
-  <div class="cal-header">
-    <span class="cal-month-title" id="cal-title"></span>
-    <div class="cal-nav">
-      <button onclick="changeMonth(-1)" aria-label="Previous">&#8249;</button>
-      <button onclick="changeMonth(1)"  aria-label="Next">&#8250;</button>
+    <div style="flex:1;min-height:0;display:flex;flex-direction:column">
+      <div class="s-title" id="sb-title">This month's events</div>
+      <div class="sb-list" id="sb-list"></div>
     </div>
-  </div>
-
-  <div class="cal-grid" id="cal-grid"></div>
-  <div class="event-list" id="event-list"></div>
-
+  </aside>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-//  GOOGLE SHEETS CONNECTION
-//
-//  SHEET 1 — Events (tab named "Events")
-//  Columns: Date | Title | Category | Time | Description | Link
-//  Category values: match | music | special | worldcup | private
-//  Date format: YYYY-MM-DD
-//
-//  SHEET 2 — Hours (tab named "Hours")
-//  Columns: Day | Open | Close
-//  Day values: Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday
-//  Use "Closed" in the Open column for days you're not open.
-//  Update this sheet each week to reflect current hours.
-//
-//  HOW TO GET THE CSV URLS:
-//  File → Share → Publish to web → select the tab → CSV → Publish
-//  You need TWO separate published CSV URLs, one per tab.
-// ═══════════════════════════════════════════════════════════════
+// Language detection
+var LANG = (navigator.language || 'en').toLowerCase().startsWith('pt') ? 'pt' : 'en';
 
-const EVENTS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQlnvGdph2Y_jYWCnQ-OZcH7TGwFuNvLJ76DjwJlxc9eSj5ySerbDV3ae1eQu3_xbJYnpYXUeNjpbS8/pub?gid=0&single=true&output=csv';
-
-// Replace with your published Hours tab CSV URL:
-const HOURS_CSV_URL  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQlnvGdph2Y_jYWCnQ-OZcH7TGwFuNvLJ76DjwJlxc9eSj5ySerbDV3ae1eQu3_xbJYnpYXUeNjpbS8/pub?gid=595431382&single=true&output=csv';
-
-// ── Demo fallback hours (shown until sheet is connected) ───────
-const DEMO_HOURS = [
-  {day:'Monday',    open:'Closed', close:''},
-  {day:'Tuesday',   open:'Closed', close:''},
-  {day:'Wednesday', open:'12:00',  close:'22:00'},
-  {day:'Thursday',  open:'12:00',  close:'22:00'},
-  {day:'Friday',    open:'14:00',  close:'23:00'},
-  {day:'Saturday',  open:'12:00',  close:'23:00'},
-  {day:'Sunday',    open:'12:00',  close:'21:00'},
-];
-
-const DEMO_EVENTS = [
-  {date:'2026-05-20',title:'Grand Opening Party',      category:'special',  time:'18:00',desc:'Doors open. Free entry. Live DJ.'},
-  {date:'2026-05-23',title:"DJ Set — Dino d'Santiago", category:'music',    time:'21:00',desc:'Afro-jazz & kuduro vibes.'},
-  {date:'2026-05-30',title:'UCL Final Watch Party',    category:'worldcup', time:'17:00',desc:'Champions League Final — Budapest.'},
-  {date:'2026-06-06',title:'DJ Set — Branko',          category:'music',    time:'21:00',desc:'Electronic & Afrobeat.'},
-  {date:'2026-06-11',title:'World Cup Fan Zone Opens', category:'worldcup', time:'20:00',desc:'Opening day. All screens live.'},
-  {date:'2026-06-14',title:'Portugal Watch Party',     category:'match',    time:'19:00',desc:'Portugal group stage. Fan zone open.'},
-  {date:'2026-06-19',title:'DJ Set — Surma',           category:'music',    time:'21:00',desc:'Electronic & fado fusion.'},
-  {date:'2026-06-22',title:'Portugal Watch Party',     category:'match',    time:'19:00',desc:'Portugal group stage. Full fan zone.'},
-  {date:'2026-06-26',title:'DJ Set — Xinobi',          category:'music',    time:'21:00',desc:'Deep house. Lisbon selects.'},
-  {date:'2026-07-02',title:'Round of 32 Watch Party',  category:'worldcup', time:'18:00',desc:'Best match of the day. Big screen.'},
-  {date:'2026-07-10',title:'DJ Set — ProfJam',         category:'music',    time:'21:00',desc:'Hip-hop & trap from Lisbon.'},
-  {date:'2026-07-14',title:'Quarter-Final Watch Party',category:'worldcup', time:'18:00',desc:'Full evening. Fan zone. DJ warm-up.'},
-  {date:'2026-07-19',title:'World Cup Final',          category:'worldcup', time:'16:00',desc:'The big one. Doors 16:00. Party all night.'},
-];
-
-const CAT = {
-  match:    {color:'#F5C518',label:'Match Day',        bg:'rgba(245,197,24,0.16)',  tc:'#F5C518'},
-  music:    {color:'#C084FC',label:'Music / DJ',       bg:'rgba(192,132,252,0.16)', tc:'#C084FC'},
-  special:  {color:'#4ADE80',label:'Special Event',    bg:'rgba(74,222,128,0.16)',  tc:'#4ADE80'},
-  worldcup: {color:'#FF4060',label:'World Cup / UCL',  bg:'rgba(255,64,96,0.16)',   tc:'#FF4060'},
-  private:  {color:'#60C4FF',label:'Private Event',    bg:'rgba(96,196,255,0.16)',  tc:'#60C4FF'},
+var I18N = {
+  en: {
+    hoursLabel: "This week's hours",
+    categories: 'Categories',
+    thisMonth: "This month's events",
+    noEvents: 'No events this month.',
+    noEventsDay: 'No events on this day.',
+    moreInfo: 'More info',
+    loading: 'Loading...',
+    loadingEvents: 'Loading events...',
+    match: 'Match Day', music: 'Music / DJ', special: 'Special Event',
+    worldcup: 'World Cup / UCL', private: 'Private Event',
+    months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    days: ['Su','Mo','Tu','We','Th','Fr','Sa'],
+    dayAbbr: {Monday:'Mon',Tuesday:'Tue',Wednesday:'Wed',Thursday:'Thu',Friday:'Fri',Saturday:'Sat',Sunday:'Sun'}
+  },
+  pt: {
+    hoursLabel: 'Horário desta semana',
+    categories: 'Categorias',
+    thisMonth: 'Eventos deste mês',
+    noEvents: 'Sem eventos este mês.',
+    noEventsDay: 'Sem eventos neste dia.',
+    moreInfo: 'Mais info',
+    loading: 'A carregar...',
+    loadingEvents: 'A carregar eventos...',
+    match: 'Jogo', music: 'Música / DJ', special: 'Evento Especial',
+    worldcup: 'Mundial / UCL', private: 'Evento Privado',
+    months: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+    days: ['Do','Se','Te','Qu','Qu','Se','Sá'],
+    dayAbbr: {Monday:'Seg',Tuesday:'Ter',Wednesday:'Qua',Thursday:'Qui',Friday:'Sex',Saturday:'Sáb',Sunday:'Dom'}
+  }
 };
 
-const MONTHS   = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December'];
-const DAYS     = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-const DAY_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var T = I18N[LANG];
 
-let allEvents  = [];
-let viewYear   = new Date().getFullYear();
-let viewMonth  = new Date().getMonth();
-let selectedDate = null;
+// Sheet URLs
+var EVENTS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQlnvGdph2Y_jYWCnQ-OZcH7TGwFuNvLJ76DjwJlxc9eSj5ySerbDV3ae1eQu3_xbJYnpYXUeNjpbS8/pub?gid=0&single=true&output=csv';
+var HOURS_CSV_URL  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQlnvGdph2Y_jYWCnQ-OZcH7TGwFuNvLJ76DjwJlxc9eSj5ySerbDV3ae1eQu3_xbJYnpYXUeNjpbS8/pub?gid=595431382&single=true&output=csv';
 
-// ── CSV parser ─────────────────────────────────────────────────
+var DEMO_HOURS = [
+  {day:'Monday',open:'Closed',close:''},{day:'Tuesday',open:'Closed',close:''},
+  {day:'Wednesday',open:'12:00',close:'22:00'},{day:'Thursday',open:'12:00',close:'22:00'},
+  {day:'Friday',open:'14:00',close:'23:00'},{day:'Saturday',open:'12:00',close:'23:00'},
+  {day:'Sunday',open:'12:00',close:'21:00'}
+];
+
+var DEMO_EVENTS = [
+  {date:'2026-05-20',title:'Grand Opening Party',category:'special',time:'18:00',desc:'Doors open. Free entry. Live DJ.',link:''},
+  {date:'2026-05-23',title:"DJ Set — Dino d'Santiago",category:'music',time:'21:00',desc:'Afro-jazz & kuduro vibes.',link:''},
+  {date:'2026-05-30',title:'UCL Final Watch Party',category:'worldcup',time:'17:00',desc:'Champions League Final — Budapest.',link:''},
+  {date:'2026-06-06',title:'DJ Set — Branko',category:'music',time:'21:00',desc:'Electronic & Afrobeat.',link:''},
+  {date:'2026-06-11',title:'World Cup Fan Zone Opens',category:'worldcup',time:'20:00',desc:'Opening day. All screens live.',link:''},
+  {date:'2026-06-14',title:'Portugal Watch Party',category:'match',time:'19:00',desc:'Portugal group stage. Fan zone open.',link:''},
+  {date:'2026-06-19',title:'DJ Set — Surma',category:'music',time:'21:00',desc:'Electronic & fado fusion.',link:''},
+  {date:'2026-06-22',title:'Portugal Watch Party',category:'match',time:'19:00',desc:'Portugal group stage. Full fan zone.',link:''},
+  {date:'2026-06-26',title:'DJ Set — Xinobi',category:'music',time:'21:00',desc:'Deep house. Lisbon selects.',link:''},
+  {date:'2026-07-02',title:'Round of 32 Watch Party',category:'worldcup',time:'18:00',desc:'Best match of the day. Big screen.',link:''},
+  {date:'2026-07-10',title:'DJ Set — ProfJam',category:'music',time:'21:00',desc:'Hip-hop & trap from Lisbon.',link:''},
+  {date:'2026-07-14',title:'Quarter-Final Watch Party',category:'worldcup',time:'18:00',desc:'Full evening. Fan zone. DJ warm-up.',link:''},
+  {date:'2026-07-19',title:'World Cup Final',category:'worldcup',time:'16:00',desc:'The big one. Doors 16:00. Party all night.',link:''}
+];
+
+var CAT = {
+  match:    {color:'#F5C518', label:T.match,    bg:'rgba(245,197,24,0.16)',   tc:'#F5C518'},
+  music:    {color:'#C084FC', label:T.music,    bg:'rgba(192,132,252,0.16)',  tc:'#C084FC'},
+  special:  {color:'#4ADE80', label:T.special,  bg:'rgba(74,222,128,0.16)',   tc:'#4ADE80'},
+  worldcup: {color:'#FF4060', label:T.worldcup, bg:'rgba(255,64,96,0.16)',    tc:'#FF4060'},
+  private:  {color:'#60C4FF', label:T.private,  bg:'rgba(96,196,255,0.16)',   tc:'#60C4FF'}
+};
+
+var MONTHS   = T.months.slice();
+var DAYS     = T.days.slice();
+var DAY_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var DAY_ABBR = Object.assign({}, T.dayAbbr);
+
+var allEvents = [];
+var viewYear  = new Date().getFullYear();
+var viewMonth = new Date().getMonth();
+var selectedDate = null;
+
 function parseCSV(csv) {
-  const lines = csv.trim().split('\n').slice(1);
-  return lines.map(line => {
-    const cols=[]; let cur='',inQ=false;
-    for(let i=0;i<line.length;i++){
-      if(line[i]==='"'){inQ=!inQ;continue}
-      if(line[i]===','&&!inQ){cols.push(cur.trim());cur='';}
-      else cur+=line[i];
+  var lines = csv.trim().split('\n').slice(1);
+  return lines.map(function(line) {
+    var cols = [], cur = '', inQ = false;
+    for (var i = 0; i < line.length; i++) {
+      if (line[i] === '"') { inQ = !inQ; continue; }
+      if (line[i] === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+      else cur += line[i];
     }
     cols.push(cur.trim());
     return cols;
-  }).filter(r=>r.length&&r[0]);
+  }).filter(function(r) { return r.length && r[0]; });
 }
 
-// ── Week range label ───────────────────────────────────────────
 function weekRangeLabel() {
-  const now   = new Date();
-  const dow   = now.getDay(); // 0=Sun
-  const mon   = new Date(now); mon.setDate(now.getDate() - ((dow+6)%7));
-  const sun   = new Date(mon); sun.setDate(mon.getDate()+6);
-  const fmt   = d => `${MONTHS[d.getMonth()].slice(0,3)} ${d.getDate()}`;
-  return `${fmt(mon)} – ${fmt(sun)}`;
+  var now = new Date(), dow = now.getDay();
+  var mon = new Date(now); mon.setDate(now.getDate() - ((dow + 6) % 7));
+  var sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  function fmt(d) { return MONTHS[d.getMonth()].slice(0,3) + ' ' + d.getDate(); }
+  return fmt(mon) + ' – ' + fmt(sun);
 }
 
-// ── Render hours ───────────────────────────────────────────────
 function renderHours(rows) {
-  const todayName = DAY_FULL[new Date().getDay()];
+  var todayName = DAY_FULL[new Date().getDay()];
   document.getElementById('hours-week-range').textContent = weekRangeLabel();
-
-  // Build lookup from parsed rows
-  const lookup = {};
-  rows.forEach(r => { if(r[0]) lookup[r[0].trim()] = {open:r[1]||'',close:r[2]||''}; });
-
-  const order = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  let html = '';
-  order.forEach(day => {
-    const h       = lookup[day] || {open:'Closed',close:''};
-    const closed  = h.open.toLowerCase()==='closed'||!h.open;
-    const isToday = day===todayName;
-    const time    = closed ? 'Closed' : `${h.open}${h.close?' – '+h.close:''}`;
-    html += `<div class="hours-row${isToday?' today-row':''}${closed?' closed-row':''}">
-      <span class="hours-day">${day}</span>
-      <span class="hours-time">${time}</span>
-    </div>`;
+  var lookup = {};
+  rows.forEach(function(r) { if (r[0]) lookup[r[0].trim()] = {open: r[1]||'', close: r[2]||''}; });
+  var order = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  var html = '';
+  order.forEach(function(day) {
+    var h = lookup[day] || {open:'Closed', close:''};
+    var closed = h.open.toLowerCase() === 'closed' || !h.open;
+    var isToday = day === todayName;
+    var time = closed ? 'Closed' : h.open + (h.close ? ' – ' + h.close : '');
+    html += '<div class="hb-cell' + (isToday ? ' today' : '') + '">' +
+      '<span class="hb-day">' + DAY_ABBR[day] + '</span>' +
+      '<span class="hb-time' + (closed ? ' cl' : '') + '">' + time + '</span>' +
+      '</div>';
   });
   document.getElementById('hours-body').innerHTML = html;
 }
 
-// ── Load hours from sheet ──────────────────────────────────────
-async function loadHours() {
-  if(!HOURS_CSV_URL||HOURS_CSV_URL==='YOUR_HOURS_TAB_CSV_URL_HERE'){
-    renderHours(DEMO_HOURS.map(h=>[h.day,h.open,h.close]));
+function loadHours() {
+  if (!HOURS_CSV_URL || HOURS_CSV_URL === 'YOUR_HOURS_TAB_CSV_URL_HERE') {
+    renderHours(DEMO_HOURS.map(function(h) { return [h.day, h.open, h.close]; }));
     return;
   }
-  try {
-    const res  = await fetch(HOURS_CSV_URL);
-    const rows = parseCSV(await res.text());
-    renderHours(rows);
-  } catch(e) {
-    renderHours(DEMO_HOURS.map(h=>[h.day,h.open,h.close]));
-  }
+  fetch(HOURS_CSV_URL)
+    .then(function(r) { return r.text(); })
+    .then(function(txt) { renderHours(parseCSV(txt)); })
+    .catch(function() { renderHours(DEMO_HOURS.map(function(h) { return [h.day, h.open, h.close]; })); });
 }
 
-// ── Load events from sheet ─────────────────────────────────────
-async function loadEvents() {
-  if(!EVENTS_CSV_URL||EVENTS_CSV_URL==='YOUR_EVENTS_TAB_CSV_URL_HERE'){
-    allEvents=DEMO_EVENTS; renderCalendar(); return;
+function loadEvents() {
+  if (!EVENTS_CSV_URL || EVENTS_CSV_URL === 'YOUR_EVENTS_TAB_CSV_URL_HERE') {
+    allEvents = DEMO_EVENTS; renderAll(); return;
   }
-  document.getElementById('event-list').innerHTML='<p class="cal-loading">Loading events…</p>';
-  try {
-    const res  = await fetch(EVENTS_CSV_URL);
-    const rows = parseCSV(await res.text());
-    allEvents  = rows.map(r=>({
-      date:r[0]||'', title:r[1]||'',
-      category:(r[2]||'special').toLowerCase(),
-      time:r[3]||'', desc:r[4]||'', link:r[5]||''
-    })).filter(e=>e.date&&e.title);
-  } catch(e) { allEvents=DEMO_EVENTS; }
-  renderCalendar();
+  fetch(EVENTS_CSV_URL)
+    .then(function(r) { return r.text(); })
+    .then(function(txt) {
+      var rows = parseCSV(txt);
+      allEvents = rows.map(function(r) {
+        return {date:r[0]||'', title:r[1]||'', category:(r[2]||'special').toLowerCase(),
+                time:r[3]||'', desc:r[4]||'', link:r[5]||''};
+      }).filter(function(e) { return e.date && e.title; });
+      renderAll();
+    })
+    .catch(function() { allEvents = DEMO_EVENTS; renderAll(); });
 }
 
-// ── Calendar render ────────────────────────────────────────────
-function eventsOnDay(y,m,d){
-  const s=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-  return allEvents.filter(e=>e.date===s);
+function renderAll() { renderCalendar(); renderSidebar(); }
+
+function eventsOnDay(y, m, d) {
+  var s = y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+  return allEvents.filter(function(e) { return e.date === s; });
 }
 
-function renderCalendar(){
-  document.getElementById('cal-title').textContent=MONTHS[viewMonth]+' '+viewYear;
-  const grid=document.getElementById('cal-grid');
-  grid.innerHTML='';
-  DAYS.forEach(d=>{const el=document.createElement('div');el.className='cal-dow';el.textContent=d;grid.appendChild(el);});
-
-  const today=new Date();
-  const firstDow=new Date(viewYear,viewMonth,1).getDay();
-  const dim=new Date(viewYear,viewMonth+1,0).getDate();
-  const prevDim=new Date(viewYear,viewMonth,0).getDate();
-
-  for(let i=0;i<firstDow;i++){
-    const el=document.createElement('div');el.className='cal-day other-month';
-    el.textContent=prevDim-firstDow+1+i;grid.appendChild(el);
+function renderCalendar() {
+  document.getElementById('cal-title').textContent = MONTHS[viewMonth] + ' ' + viewYear;
+  var grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  DAYS.forEach(function(d) {
+    var el = document.createElement('div'); el.className = 'cal-dow'; el.textContent = d; grid.appendChild(el);
+  });
+  var today = new Date();
+  var firstDow = new Date(viewYear, viewMonth, 1).getDay();
+  var dim = new Date(viewYear, viewMonth+1, 0).getDate();
+  var prevDim = new Date(viewYear, viewMonth, 0).getDate();
+  for (var i = 0; i < firstDow; i++) {
+    var el = document.createElement('div'); el.className = 'cal-day';
+    el.textContent = prevDim - firstDow + 1 + i; grid.appendChild(el);
   }
-  for(let d=1;d<=dim;d++){
-    const el=document.createElement('div');el.className='cal-day';
-    const numSpan=document.createElement('span');numSpan.textContent=d;el.appendChild(numSpan);
-    const isToday=(today.getFullYear()===viewYear&&today.getMonth()===viewMonth&&today.getDate()===d);
-    if(isToday)el.classList.add('today');
-    const evs=eventsOnDay(viewYear,viewMonth,d);
-    if(evs.length){
+  for (var d = 1; d <= dim; d++) {
+    var el = document.createElement('div'); el.className = 'cal-day cur-month';
+    var ns = document.createElement('span'); ns.textContent = d; el.appendChild(ns);
+    if (today.getFullYear()===viewYear && today.getMonth()===viewMonth && today.getDate()===d)
+      el.classList.add('today');
+    var evs = eventsOnDay(viewYear, viewMonth, d);
+    if (evs.length) {
       el.classList.add('has-event');
-      const dr=document.createElement('div');dr.className='dot-row';
-      evs.slice(0,3).forEach(ev=>{
-        const dot=document.createElement('span');dot.className='evt-dot';
-        dot.style.background=(CAT[ev.category]||CAT.special).color;
+      var dr = document.createElement('div'); dr.className = 'dot-row';
+      evs.slice(0,3).forEach(function(ev) {
+        var dot = document.createElement('span'); dot.className = 'evt-dot';
+        dot.style.background = (CAT[ev.category] || CAT.special).color;
         dr.appendChild(dot);
       });
       el.appendChild(dr);
-      el.onclick=()=>selectDay(d);
+      (function(day) { el.onclick = function() { selectDay(day); }; })(d);
     }
-    const ds=`${viewYear}-${String(viewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    if(selectedDate===ds)el.classList.add('selected');
+    var ds = viewYear + '-' + String(viewMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    if (selectedDate === ds) el.classList.add('selected');
     grid.appendChild(el);
   }
-  const total=firstDow+dim;
-  const rem=total%7===0?0:7-(total%7);
-  for(let i=1;i<=rem;i++){
-    const el=document.createElement('div');el.className='cal-day other-month';el.textContent=i;grid.appendChild(el);
+  var total = firstDow + dim, rem = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for (var i = 1; i <= rem; i++) {
+    var el = document.createElement('div'); el.className = 'cal-day'; el.textContent = i; grid.appendChild(el);
   }
-  renderEventList();
 }
 
-function selectDay(d){
-  const ds=`${viewYear}-${String(viewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-  selectedDate=(selectedDate===ds)?null:ds;
-  renderCalendar();
+function getShown() {
+  var list = selectedDate
+    ? allEvents.filter(function(e) { return e.date === selectedDate; })
+    : allEvents.filter(function(e) {
+        var parts = e.date.split('-').map(Number);
+        return parts[0] === viewYear && parts[1] === viewMonth + 1;
+      });
+  return list.sort(function(a,b) { return a.date.localeCompare(b.date); });
 }
 
-function renderEventList(){
-  const list=document.getElementById('event-list');list.innerHTML='';
-  const shown=(selectedDate
-    ?allEvents.filter(e=>e.date===selectedDate)
-    :allEvents.filter(e=>{const[y,m]=e.date.split('-').map(Number);return y===viewYear&&m===viewMonth+1;}))
-    .sort((a,b)=>a.date.localeCompare(b.date));
-  if(!shown.length){
-    const p=document.createElement('p');p.className='no-events';
-    p.textContent=selectedDate?'No events on this day.':'No events this month.';
-    list.appendChild(p);return;
+function monthLabel() {
+  if (selectedDate) {
+    return parseInt(selectedDate.split('-')[2]) + ' ' + MONTHS[viewMonth].slice(0,3) + ' events';
   }
-  shown.forEach(ev=>{
-    const cat=CAT[ev.category]||CAT.special;
-    const[,mm,dd]=ev.date.split('-');
-    const mon=MONTHS[parseInt(mm)-1].slice(0,3).toUpperCase();
-    const card=document.createElement('div');
-    card.className='event-card';card.style.setProperty('--ev-color',cat.color);
-    card.innerHTML=`
-      <div class="ev-date-block">
-        <span class="ev-day">${parseInt(dd)}</span>
-        <span class="ev-mon">${mon}</span>
-      </div>
-      <div class="ev-body">
-        <div class="ev-title">${ev.title}</div>
-        <div class="ev-meta">${ev.time?ev.time+(ev.desc?' &middot; ':''):''}${ev.desc}</div>
-        ${ev.link?`<a class="ev-link" href="${ev.link}" target="_blank" rel="noopener">More info &#8250;</a>`:''}
-      </div>
-      <span class="ev-badge" style="background:${cat.bg};color:${cat.tc}">${cat.label}</span>`;
-    list.appendChild(card);
+  return T.thisMonth;
+}
+
+function renderSidebar() {
+  var sb = document.getElementById('sb-list');
+  sb.innerHTML = '';
+  document.getElementById('sb-title').textContent = monthLabel();
+  var shown = getShown();
+  if (!shown.length) {
+    var p = document.createElement('p'); p.className = 'sb-none';
+    p.textContent = selectedDate ? T.noEventsDay : T.noEvents;
+    sb.appendChild(p); return;
+  }
+  shown.forEach(function(ev) {
+    var cat = CAT[ev.category] || CAT.special;
+    var parts = ev.date.split('-');
+    var mon = MONTHS[parseInt(parts[1])-1].slice(0,3).toUpperCase();
+    var dd  = parseInt(parts[2]);
+    var card = document.createElement('div');
+    card.className = 'sb-card';
+    card.style.setProperty('--ec', cat.color);
+    var linkHtml = ev.link
+      ? '<a class="ev-link" href="' + ev.link + '" target="_blank" rel="noopener">' + T.moreInfo + ' ›</a>'
+      : '';
+    var metaStr = (ev.time ? ev.time + (ev.desc ? ' · ' : '') : '') + ev.desc;
+    card.innerHTML =
+      '<div class="sb-date">' +
+        '<span class="sb-day">' + dd + '</span>' +
+        '<span class="sb-mon">' + mon + '</span>' +
+      '</div>' +
+      '<div class="sb-body">' +
+        '<div class="sb-name">' + ev.title + '</div>' +
+        '<div class="sb-meta">' + metaStr + '</div>' +
+        linkHtml +
+      '</div>' +
+      '<span class="sb-badge" style="background:' + cat.bg + ';color:' + cat.tc + '">' + cat.label + '</span>';
+    sb.appendChild(card);
   });
 }
 
-function changeMonth(dir){
-  viewMonth+=dir;
-  if(viewMonth>11){viewMonth=0;viewYear++;}
-  if(viewMonth<0){viewMonth=11;viewYear--;}
-  selectedDate=null;renderCalendar();
+function selectDay(d) {
+  var ds = viewYear + '-' + String(viewMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+  selectedDate = (selectedDate === ds) ? null : ds;
+  renderAll();
 }
 
-// kick off both loads in parallel
+function changeMonth(dir) {
+  viewMonth += dir;
+  if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+  if (viewMonth < 0)  { viewMonth = 11; viewYear--; }
+  selectedDate = null;
+  renderAll();
+}
+
+// Apply i18n to static HTML elements
+document.documentElement.lang = LANG;
+document.querySelector('.hb-label').textContent = T.hoursLabel;
+document.getElementById('s-cat-title').textContent = T.categories;
+var catLabels = [T.match, T.music, T.special, T.worldcup, T.private];
+document.querySelectorAll('.leg-i span:last-child').forEach(function(el, i) {
+  el.textContent = catLabels[i];
+});
+
+// Kick off data loads
 loadHours();
 loadEvents();
 </script>
