@@ -113,9 +113,47 @@ body{font-family:'Outfit',sans-serif;display:flex;flex-direction:column;
   text-transform:uppercase;color:rgba(255,255,255,0.55)}
 .cal-leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 
+/* Tablet: stack columns, slightly tighter padding */
 @media(max-width:900px){
   .layout{grid-template-columns:1fr}
-  .sidebar{border-left:none;border-top:1px solid #E0E4F4}
+  .sidebar{border-left:none;border-top:1px solid #E0E4F4;padding:24px 20px}
+  .main{padding:24px 24px 32px}
+}
+
+/* Phone: compact everything */
+@media(max-width:600px){
+  .hours-bar{padding:8px 12px;gap:8px;flex-wrap:wrap}
+  .hb-label{font-size:8px;letter-spacing:.15em}
+  .hb-week{font-size:9px;width:100%;margin:0;order:3}
+  .hb-cells{width:100%;order:2}
+  .hb-cell{padding:3px 1px}
+  .hb-day{font-size:8px}
+  .hb-time{font-size:9px}
+  .hb-time.cl{font-size:8px}
+
+  .main{padding:20px 14px 24px;gap:16px}
+  .cal-month-title{font-size:1.7rem}
+  .cal-nav button{width:34px;height:34px;font-size:1.15rem}
+
+  .cal-legend{gap:.4rem .7rem;margin-bottom:2px}
+  .cal-leg-item{font-size:.55rem;letter-spacing:.1em;gap:5px}
+  .cal-leg-dot{width:7px;height:7px}
+
+  .cal-grid{gap:3px;margin-top:10px}
+  .cal-dow{font-size:8px;letter-spacing:.1em;padding-bottom:4px}
+  .cal-day{min-height:42px;font-size:13px;border-radius:6px;gap:2px}
+  .evt-dot{width:4px;height:4px}
+
+  .sidebar{padding:20px 14px}
+  .s-title{font-size:9px;letter-spacing:.18em;margin-bottom:10px}
+  .sb-list{gap:10px}
+  .sb-card{padding:13px 13px 13px 17px;gap:11px;border-radius:10px}
+  .sb-date{min-width:30px}
+  .sb-day{font-size:1.3rem}
+  .sb-mon{font-size:.55rem}
+  .sb-name{font-size:.88rem}
+  .sb-badge{font-size:.52rem;padding:2px 7px}
+  .sb-meta{font-size:.72rem}
 }
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 </style>
