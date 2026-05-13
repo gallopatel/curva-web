@@ -35,72 +35,83 @@ body{font-family:'Outfit',sans-serif;display:flex;flex-direction:column;
 .hb-time.cl{color:#C8D0E0;font-style:italic;font-weight:300;font-size:10px}
 .hb-loading{font-size:11px;color:#A0A8C0;font-style:italic}
 
-.layout{display:grid;grid-template-columns:1fr 260px;flex:1}
+.layout{display:grid;grid-template-columns:1fr 340px;flex:1}
 
-.main{background:var(--navy);padding:28px 30px 36px;
-  display:flex;flex-direction:column;gap:18px;position:relative;overflow-y:auto}
+.main{background:var(--navy);padding:32px 44px 40px;
+  display:flex;flex-direction:column;gap:22px;position:relative;overflow-y:auto}
 .main::before{content:'';position:absolute;inset:0;
   background-image:repeating-linear-gradient(135deg,transparent,transparent 40px,
   rgba(255,255,255,0.015) 40px,rgba(255,255,255,0.015) 41px);
   pointer-events:none;z-index:0}
 .main>*{position:relative;z-index:1}
 
-.cal-top{display:flex;align-items:center;justify-content:space-between}
-.cal-month-title{font-size:1.5rem;font-weight:700;color:#fff;letter-spacing:.02em}
-.cal-nav{display:flex;gap:6px}
-.cal-nav button{width:34px;height:34px;border-radius:8px;
+.cal-top{display:flex;align-items:center;justify-content:space-between;width:100%}
+.cal-month-title{font-size:2.4rem;font-weight:700;color:#fff;letter-spacing:.01em;line-height:1}
+.cal-nav{display:flex;gap:8px}
+.cal-nav button{width:38px;height:38px;border-radius:8px;
   background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);
-  color:rgba(255,255,255,0.7);cursor:pointer;font-size:1.2rem;line-height:1;
+  color:rgba(255,255,255,0.7);cursor:pointer;font-size:1.3rem;line-height:1;
   display:flex;align-items:center;justify-content:center;
   transition:background .15s,color .15s;font-family:'Outfit',sans-serif}
 .cal-nav button:hover{background:rgba(255,255,255,0.16);color:#fff}
 
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.cal-dow{text-align:center;font-size:9px;font-weight:700;letter-spacing:.1em;
-  text-transform:uppercase;color:rgba(255,255,255,0.28);padding:0 0 7px}
-.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;border-radius:7px;font-size:12px;font-weight:400;
-  color:rgba(255,255,255,0.2);gap:2px;transition:background .15s}
+.cal-wrap{width:100%;flex:1;display:flex;flex-direction:column}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:18px;flex:1}
+.cal-dow{text-align:center;font-size:10px;font-weight:700;letter-spacing:.15em;
+  text-transform:uppercase;color:rgba(255,255,255,0.28);padding:0 0 6px}
+.cal-day{min-height:62px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;border-radius:8px;font-size:15px;font-weight:400;
+  color:rgba(255,255,255,0.2);gap:4px;transition:background .15s}
 .cal-day.cur-month{color:rgba(255,255,255,0.6)}
-.cal-day.has-event{color:#fff;font-weight:600;background:rgba(255,255,255,0.07);
-  border:1px solid rgba(255,255,255,0.13);cursor:pointer}
+.cal-day.has-event{color:#fff;font-weight:600;cursor:pointer}
 .cal-day.has-event:hover{background:rgba(255,255,255,0.13)}
 .cal-day.today{background:#fff;color:var(--navy);font-weight:700;border:none}
 .cal-day.selected{background:rgba(245,197,24,0.2);
   border:1.5px solid rgba(245,197,24,0.6);color:var(--yellow);font-weight:700}
-.dot-row{display:flex;gap:2px;justify-content:center}
-.evt-dot{width:4px;height:4px;border-radius:50%;display:block}
+.dot-row{display:flex;gap:3px;justify-content:center}
+.evt-dot{width:5px;height:5px;border-radius:50%;display:block}
 
 .sidebar{background:#fff;border-left:1px solid #E0E4F4;
-  padding:24px 18px;display:flex;flex-direction:column;gap:24px;overflow-y:auto}
-.s-title{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--navy);opacity:.4;margin-bottom:10px}
+  padding:32px 22px;display:flex;flex-direction:column;gap:18px;overflow-y:auto}
+.s-title{font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--navy);opacity:.4;margin-bottom:14px}
 .leg-list{display:flex;flex-direction:column;gap:9px}
 .leg-i{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:400;color:#5060A0}
 .leg-d{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
-.sb-list{display:flex;flex-direction:column;gap:7px}
-.sb-card{display:flex;gap:10px;align-items:flex-start;
-  padding:10px 11px 10px 13px;background:#F7F8FD;border:1px solid #E8EAF4;
-  border-radius:9px;position:relative;overflow:hidden;
-  transition:background .18s,border-color .18s}
-.sb-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+.sb-list{display:flex;flex-direction:column;gap:14px}
+.sb-card{display:flex;gap:14px;align-items:flex-start;
+  padding:16px 16px 16px 20px;background:#fff;border:1px solid #E8EAF4;
+  border-radius:12px;position:relative;overflow:hidden;
+  transition:background .18s,border-color .18s,box-shadow .18s;
+  box-shadow:0 1px 2px rgba(0,1,127,0.03)}
+.sb-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
   background:var(--ec,var(--yellow))}
-.sb-card:hover{background:#EEEFFE;border-color:var(--ec,var(--yellow))}
-.sb-date{display:flex;flex-direction:column;align-items:center;min-width:26px}
-.sb-day{font-size:1.05rem;font-weight:700;line-height:1;color:var(--ec,var(--navy))}
-.sb-mon{font-size:.52rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  color:#A0A8C0;margin-top:1px}
-.sb-body{flex:1;min-width:0}
-.sb-name{font-size:.8rem;font-weight:600;color:var(--navy);margin-bottom:1px}
-.sb-meta{font-size:.68rem;font-weight:300;color:#8090B8;line-height:1.4}
-.sb-badge{font-size:.52rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-  padding:2px 6px;border-radius:20px;align-self:flex-start;white-space:nowrap;margin-top:1px}
+.sb-card:hover{background:#F7F8FD;border-color:var(--ec,var(--yellow));
+  box-shadow:0 2px 8px rgba(0,1,127,0.06)}
+.sb-date{display:flex;flex-direction:column;align-items:center;min-width:34px;padding-top:2px}
+.sb-day{font-size:1.5rem;font-weight:700;line-height:1;color:var(--ec,var(--navy))}
+.sb-mon{font-size:.58rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:#A0A8C0;margin-top:3px}
+.sb-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.sb-name{font-size:.95rem;font-weight:600;color:var(--navy);line-height:1.25}
+.sb-badge{font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 8px;border-radius:20px;align-self:flex-start;white-space:nowrap}
+.sb-meta{font-size:.75rem;font-weight:300;color:#8090B8;line-height:1.45}
 .sb-none{font-size:.78rem;font-weight:300;font-style:italic;
   color:#A0A8C0;padding:1rem 0;text-align:center}
-.ev-link{font-size:.68rem;font-weight:500;color:var(--ec,var(--navy));
-  text-decoration:none;display:inline-block;margin-top:3px}
+.ev-link{font-size:.7rem;font-weight:500;color:var(--ec,var(--navy));
+  text-decoration:none;display:inline-block;margin-top:2px}
 .ev-link:hover{text-decoration:underline}
+
+
+/* legend above calendar in navy */
+.cal-legend{display:flex;flex-wrap:wrap;gap:.5rem 1.3rem;
+  width:100%;margin-bottom:6px}
+.cal-leg-item{display:flex;align-items:center;gap:7px;
+  font-size:.68rem;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(255,255,255,0.55)}
+.cal-leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 
 @media(max-width:900px){
   .layout{grid-template-columns:1fr}
@@ -119,27 +130,27 @@ body{font-family:'Outfit',sans-serif;display:flex;flex-direction:column;
 
 <div class="layout">
   <main class="main">
-    <div class="cal-top">
-      <span class="cal-month-title" id="cal-title"></span>
-      <div class="cal-nav">
-        <button onclick="changeMonth(-1)">&#8249;</button>
-        <button onclick="changeMonth(1)">&#8250;</button>
-      </div>
+    <div class="cal-legend">
+      <span class="cal-leg-item"><span class="cal-leg-dot" style="background:var(--cat-match)"></span><span id="leg-match">Match day</span></span>
+      <span class="cal-leg-item"><span class="cal-leg-dot" style="background:var(--cat-music)"></span><span id="leg-music">Music / DJ</span></span>
+      <span class="cal-leg-item"><span class="cal-leg-dot" style="background:var(--cat-special)"></span><span id="leg-special">Special event</span></span>
+      <span class="cal-leg-item"><span class="cal-leg-dot" style="background:var(--cat-worldcup)"></span><span id="leg-worldcup">World Cup / UCL</span></span>
+      <span class="cal-leg-item"><span class="cal-leg-dot" style="background:var(--cat-private)"></span><span id="leg-private">Private event</span></span>
     </div>
-    <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-wrap">
+      <div class="cal-top">
+        <span class="cal-month-title" id="cal-title"></span>
+        <div class="cal-nav">
+          <button onclick="changeMonth(-1)">&#8249;</button>
+          <button onclick="changeMonth(1)">&#8250;</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
   </main>
 
   <aside class="sidebar">
-    <div>
-      <div class="s-title" id="s-cat-title">Categories</div>
-      <div class="leg-list">
-        <div class="leg-i"><span class="leg-d" style="background:var(--cat-match)"></span><span>Match day</span></div>
-        <div class="leg-i"><span class="leg-d" style="background:var(--cat-music)"></span><span>Music / DJ</span></div>
-        <div class="leg-i"><span class="leg-d" style="background:var(--cat-special)"></span><span>Special event</span></div>
-        <div class="leg-i"><span class="leg-d" style="background:var(--cat-worldcup)"></span><span>World Cup / UCL</span></div>
-        <div class="leg-i"><span class="leg-d" style="background:var(--cat-private)"></span><span>Private event</span></div>
-      </div>
-    </div>
+
     <div style="flex:1;min-height:0;display:flex;flex-direction:column">
       <div class="s-title" id="sb-title">This month's events</div>
       <div class="sb-list" id="sb-list"></div>
@@ -396,10 +407,10 @@ function renderSidebar() {
       '</div>' +
       '<div class="sb-body">' +
         '<div class="sb-name">' + ev.title + '</div>' +
+        '<span class="sb-badge" style="background:' + cat.bg + ';color:' + cat.tc + '">' + cat.label + '</span>' +
         '<div class="sb-meta">' + metaStr + '</div>' +
         linkHtml +
-      '</div>' +
-      '<span class="sb-badge" style="background:' + cat.bg + ';color:' + cat.tc + '">' + cat.label + '</span>';
+      '</div>';
     sb.appendChild(card);
   });
 }
@@ -421,10 +432,12 @@ function changeMonth(dir) {
 // Apply i18n to static HTML elements
 document.documentElement.lang = LANG;
 document.querySelector('.hb-label').textContent = T.hoursLabel;
-document.getElementById('s-cat-title').textContent = T.categories;
+var sCat = document.getElementById('s-cat-title'); if (sCat) sCat.textContent = T.categories;
 var catLabels = [T.match, T.music, T.special, T.worldcup, T.private];
-document.querySelectorAll('.leg-i span:last-child').forEach(function(el, i) {
-  el.textContent = catLabels[i];
+var legIds = ['leg-match','leg-music','leg-special','leg-worldcup','leg-private'];
+legIds.forEach(function(id, i) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = catLabels[i];
 });
 
 // Kick off data loads
