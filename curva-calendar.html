@@ -20,6 +20,7 @@ body{font-family:'Outfit',sans-serif;display:flex;flex-direction:column;
 
 .hours-bar{background:#fff;border-bottom:1px solid #E0E4F4;
   padding:10px 28px;display:flex;align-items:center;gap:20px;flex-shrink:0}
+.hb-top{display:contents}
 .hb-label{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
   color:var(--navy);opacity:.4;white-space:nowrap;flex-shrink:0}
 .hb-week{font-size:10px;font-weight:300;color:#A0A8C0;white-space:nowrap;flex-shrink:0;margin-right:4px}
@@ -126,14 +127,17 @@ body{font-family:'Outfit',sans-serif;display:flex;flex-direction:column;
 
 /* Phone: compact everything */
 @media(max-width:600px){
-  .hours-bar{padding:8px 10px;gap:6px;flex-wrap:wrap}
-  .hb-label{font-size:8px;letter-spacing:.15em}
-  .hb-week{font-size:9px;width:100%;margin:0;order:3}
-  .hb-cells{width:100%;order:2;gap:0}
-  .hb-cell{padding:3px 0;min-width:0}
-  .hb-day{font-size:8px}
-  .hb-time{font-size:8.5px;letter-spacing:-0.02em}
-  .hb-time.cl{font-size:8px}
+  .hours-bar{padding:10px 14px;gap:0;flex-wrap:wrap;flex-direction:column;align-items:stretch}
+  .hb-label{font-size:9px;letter-spacing:.18em;display:inline}
+  .hb-week{font-size:9px;display:inline;margin:0;color:#A0A8C0}
+  .hb-top{display:flex;align-items:center;gap:6px;margin-bottom:8px;width:100%}
+  .hb-top .hb-label::after{content:' ·';color:#C0C8DC;margin-left:4px}
+  .hb-cells{width:100%;gap:0}
+  .hb-cell{padding:2px 0;min-width:0;border-right:1px solid #F0F2FA}
+  .hb-cell:last-child{border-right:none}
+  .hb-day{font-size:9px}
+  .hb-time-full{display:none}
+  .hb-time-stacked{display:flex}
 
   .main{padding:20px 14px 24px;gap:16px}
   .cal-month-title{font-size:1.7rem}
@@ -160,11 +164,11 @@ body{font-family:'Outfit',sans-serif;display:flex;flex-direction:column;
   .sb-meta{font-size:.72rem}
 }
 
-/* Very narrow screens: stack times vertically */
+/* Very narrow screens: smaller text */
 @media(max-width:480px){
-  .hb-cell{padding:3px 0;border-right:none}
-  .hb-time-full{display:none}
-  .hb-time-stacked{display:flex}
+  .hb-cell{padding:2px 0}
+  .hb-day{font-size:8px}
+  .hb-stack-line{font-size:8.5px}
 }
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 </style>
@@ -172,8 +176,10 @@ body{font-family:'Outfit',sans-serif;display:flex;flex-direction:column;
 <body>
 
 <div class="hours-bar">
-  <span class="hb-label">This week's hours</span>
-  <span class="hb-week" id="hours-week-range"></span>
+  <div class="hb-top">
+    <span class="hb-label">This week's hours</span>
+    <span class="hb-week" id="hours-week-range"></span>
+  </div>
   <div class="hb-cells" id="hours-body"><span class="hb-loading">Loading…</span></div>
 </div>
 
