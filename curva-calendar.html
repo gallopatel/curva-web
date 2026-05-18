@@ -31,7 +31,11 @@ body{font-family:'Outfit',sans-serif;display:flex;flex-direction:column;
 .hb-day{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B0B8D0}
 .hb-cell.today .hb-day{color:#9B7200}
 .hb-time{font-size:11px;font-weight:600;color:var(--navy);white-space:nowrap}
+.hb-time-stacked{display:none;flex-direction:column;line-height:1.2}
+.hb-stack-line{display:block;font-size:9px;font-weight:600}
+.hb-stack-line.cl{color:#C8D0E0;font-style:italic;font-weight:300}
 .hb-cell.today .hb-time{color:#9B7200}
+.hb-cell.today .hb-stack-line{color:#9B7200}
 .hb-time.cl{color:#C8D0E0;font-style:italic;font-weight:300;font-size:10px}
 .hb-loading{font-size:11px;color:#A0A8C0;font-style:italic}
 
@@ -122,13 +126,13 @@ body{font-family:'Outfit',sans-serif;display:flex;flex-direction:column;
 
 /* Phone: compact everything */
 @media(max-width:600px){
-  .hours-bar{padding:8px 12px;gap:8px;flex-wrap:wrap}
+  .hours-bar{padding:8px 10px;gap:6px;flex-wrap:wrap}
   .hb-label{font-size:8px;letter-spacing:.15em}
   .hb-week{font-size:9px;width:100%;margin:0;order:3}
-  .hb-cells{width:100%;order:2}
-  .hb-cell{padding:3px 1px}
+  .hb-cells{width:100%;order:2;gap:0}
+  .hb-cell{padding:3px 0;min-width:0}
   .hb-day{font-size:8px}
-  .hb-time{font-size:9px}
+  .hb-time{font-size:8.5px;letter-spacing:-0.02em}
   .hb-time.cl{font-size:8px}
 
   .main{padding:20px 14px 24px;gap:16px}
@@ -154,6 +158,13 @@ body{font-family:'Outfit',sans-serif;display:flex;flex-direction:column;
   .sb-name{font-size:.88rem}
   .sb-badge{font-size:.52rem;padding:2px 7px}
   .sb-meta{font-size:.72rem}
+}
+
+/* Very narrow screens: stack times vertically */
+@media(max-width:480px){
+  .hb-cell{padding:3px 0;border-right:none}
+  .hb-time-full{display:none}
+  .hb-time-stacked{display:flex}
 }
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 </style>
@@ -376,10 +387,16 @@ function renderHours(rows) {
     var h = lookup[day] || {open:'Closed', close:''};
     var closed = h.open.toLowerCase() === 'closed' || !h.open;
     var isToday = day === todayName;
-    var time = closed ? 'Closed' : h.open + (h.close ? ' – ' + h.close : '');
+    var timeFull = closed ? 'Closed' : h.open + (h.close ? ' – ' + h.close : '');
+    // Stacked format: open time on top, close time on bottom
+    var timeStacked = closed 
+      ? '<span class="hb-stack-line cl">Closed</span>' 
+      : '<span class="hb-stack-line">' + h.open + '</span>' +
+        (h.close ? '<span class="hb-stack-line">' + h.close + '</span>' : '');
     html += '<div class="hb-cell' + (isToday ? ' today' : '') + '">' +
       '<span class="hb-day">' + DAY_ABBR[day] + '</span>' +
-      '<span class="hb-time' + (closed ? ' cl' : '') + '">' + time + '</span>' +
+      '<span class="hb-time hb-time-full' + (closed ? ' cl' : '') + '">' + timeFull + '</span>' +
+      '<span class="hb-time hb-time-stacked">' + timeStacked + '</span>' +
       '</div>';
   });
   document.getElementById('hours-body').innerHTML = html;
