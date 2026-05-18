@@ -341,9 +341,34 @@ function loadEvents() {
     .then(function(r) { return r.text(); })
     .then(function(txt) {
       var rows = parseCSV(txt);
+      // Check header to determine format: bilingual (title_en/title_pt) or single-language (title)
+      var header = txt.trim().split('\n')[0].toLowerCase();
+      var isBilingual = header.includes('title_en') || header.includes('title_pt');
+      
       allEvents = rows.map(function(r) {
-        return {date:r[0]||'', title:r[1]||'', category:(r[2]||'special').toLowerCase(),
-                time:r[3]||'', desc:r[4]||'', link:r[5]||''};
+        if (isBilingual) {
+          // Bilingual format: date, title_en, title_pt, category, time, desc_en, desc_pt, link
+          var titleIdx = LANG === 'pt' ? 2 : 1;  // title_pt is col 2, title_en is col 1
+          var descIdx = LANG === 'pt' ? 6 : 5;   // desc_pt is col 6, desc_en is col 5
+          return {
+            date: r[0] || '',
+            title: r[titleIdx] || r[1] || '',  // fallback to English if PT missing
+            category: (r[3] || 'special').toLowerCase(),
+            time: r[4] || '',
+            desc: r[descIdx] || r[5] || '',    // fallback to English if PT missing
+            link: r[7] || ''
+          };
+        } else {
+          // Single-language format (backward compatible): date, title, category, time, desc, link
+          return {
+            date: r[0] || '',
+            title: r[1] || '',
+            category: (r[2] || 'special').toLowerCase(),
+            time: r[3] || '',
+            desc: r[4] || '',
+            link: r[5] || ''
+          };
+        }
       }).filter(function(e) { return e.date && e.title; });
       renderAll();
     })
