@@ -55,12 +55,11 @@ body{font-family:'Outfit',sans-serif;display:flex;flex-direction:column;
   transition:background .15s,color .15s;font-family:'Outfit',sans-serif}
 .cal-nav button:hover{background:rgba(255,255,255,0.16);color:#fff}
 
-.cal-wrap{width:100%;flex:1;display:flex;flex-direction:column;min-height:0}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);
-  grid-template-rows:auto repeat(6,1fr);gap:6px;margin-top:18px;flex:1}
+.cal-wrap{width:100%;flex:1;display:flex;flex-direction:column}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:18px;flex:1}
 .cal-dow{text-align:center;font-size:10px;font-weight:700;letter-spacing:.15em;
   text-transform:uppercase;color:rgba(255,255,255,0.28);padding:0 0 6px}
-.cal-day{min-height:0;display:flex;flex-direction:column;align-items:center;
+.cal-day{min-height:62px;display:flex;flex-direction:column;align-items:center;
   justify-content:center;border-radius:8px;font-size:15px;font-weight:400;
   color:rgba(255,255,255,0.2);gap:4px;transition:background .15s}
 .cal-day.cur-month{color:rgba(255,255,255,0.6)}
@@ -140,9 +139,9 @@ body{font-family:'Outfit',sans-serif;display:flex;flex-direction:column;
   .cal-leg-item{font-size:.55rem;letter-spacing:.1em;gap:5px}
   .cal-leg-dot{width:7px;height:7px}
 
-  .cal-grid{gap:3px;margin-top:10px;grid-template-rows:auto repeat(6,1fr)}
+  .cal-grid{gap:3px;margin-top:10px}
   .cal-dow{font-size:8px;letter-spacing:.1em;padding-bottom:4px}
-  .cal-day{min-height:0;font-size:13px;border-radius:6px;gap:2px}
+  .cal-day{min-height:42px;font-size:13px;border-radius:6px;gap:2px}
   .evt-dot{width:4px;height:4px}
 
   .sidebar{padding:20px 14px}
