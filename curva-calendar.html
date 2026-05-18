@@ -243,19 +243,19 @@ var DEMO_HOURS = [
 ];
 
 var DEMO_EVENTS = [
-  {date:'2026-05-20',title:'Grand Opening Party',category:'special',time:'18:00',desc:'Doors open. Free entry. Live DJ.',link:''},
-  {date:'2026-05-23',title:"DJ Set — Dino d'Santiago",category:'music',time:'21:00',desc:'Afro-jazz & kuduro vibes.',link:''},
-  {date:'2026-05-30',title:'UCL Final Watch Party',category:'worldcup',time:'17:00',desc:'Champions League Final — Budapest.',link:''},
-  {date:'2026-06-06',title:'DJ Set — Branko',category:'music',time:'21:00',desc:'Electronic & Afrobeat.',link:''},
-  {date:'2026-06-11',title:'World Cup Fan Zone Opens',category:'worldcup',time:'20:00',desc:'Opening day. All screens live.',link:''},
-  {date:'2026-06-14',title:'Portugal Watch Party',category:'match',time:'19:00',desc:'Portugal group stage. Fan zone open.',link:''},
-  {date:'2026-06-19',title:'DJ Set — Surma',category:'music',time:'21:00',desc:'Electronic & fado fusion.',link:''},
-  {date:'2026-06-22',title:'Portugal Watch Party',category:'match',time:'19:00',desc:'Portugal group stage. Full fan zone.',link:''},
-  {date:'2026-06-26',title:'DJ Set — Xinobi',category:'music',time:'21:00',desc:'Deep house. Lisbon selects.',link:''},
-  {date:'2026-07-02',title:'Round of 32 Watch Party',category:'worldcup',time:'18:00',desc:'Best match of the day. Big screen.',link:''},
-  {date:'2026-07-10',title:'DJ Set — ProfJam',category:'music',time:'21:00',desc:'Hip-hop & trap from Lisbon.',link:''},
-  {date:'2026-07-14',title:'Quarter-Final Watch Party',category:'worldcup',time:'18:00',desc:'Full evening. Fan zone. DJ warm-up.',link:''},
-  {date:'2026-07-19',title:'World Cup Final',category:'worldcup',time:'16:00',desc:'The big one. Doors 16:00. Party all night.',link:''}
+  {date:'2026-05-20',title:'Grand Opening Party',category:'special',time:'18:00',end_time:'23:00',desc:'Doors open. Free entry. Live DJ.',link:''},
+  {date:'2026-05-23',title:"DJ Set — Dino d'Santiago",category:'music',time:'21:00',end_time:'02:00',desc:'Afro-jazz & kuduro vibes.',link:''},
+  {date:'2026-05-30',title:'UCL Final Watch Party',category:'worldcup',time:'17:00',end_time:'22:00',desc:'Champions League Final — Budapest.',link:''},
+  {date:'2026-06-06',title:'DJ Set — Branko',category:'music',time:'21:00',end_time:'02:00',desc:'Electronic & Afrobeat.',link:''},
+  {date:'2026-06-11',title:'World Cup Fan Zone Opens',category:'worldcup',time:'20:00',end_time:'23:00',desc:'Opening day. All screens live.',link:''},
+  {date:'2026-06-14',title:'Portugal Watch Party',category:'match',time:'19:00',end_time:'22:00',desc:'Portugal group stage. Fan zone open.',link:''},
+  {date:'2026-06-19',title:'DJ Set — Surma',category:'music',time:'21:00',end_time:'02:00',desc:'Electronic & fado fusion.',link:''},
+  {date:'2026-06-22',title:'Portugal Watch Party',category:'match',time:'19:00',end_time:'22:00',desc:'Portugal group stage. Full fan zone.',link:''},
+  {date:'2026-06-26',title:'DJ Set — Xinobi',category:'music',time:'21:00',end_time:'02:00',desc:'Deep house. Lisbon selects.',link:''},
+  {date:'2026-07-02',title:'Round of 32 Watch Party',category:'worldcup',time:'18:00',end_time:'22:00',desc:'Best match of the day. Big screen.',link:''},
+  {date:'2026-07-10',title:'DJ Set — ProfJam',category:'music',time:'21:00',end_time:'02:00',desc:'Hip-hop & trap from Lisbon.',link:''},
+  {date:'2026-07-14',title:'Quarter-Final Watch Party',category:'worldcup',time:'18:00',end_time:'23:00',desc:'Full evening. Fan zone. DJ warm-up.',link:''},
+  {date:'2026-07-19',title:'World Cup Final',category:'worldcup',time:'16:00',end_time:'02:00',desc:'The big one. Doors 16:00. Party all night.',link:''}
 ];
 
 // Default category definitions (used as fallback and color reference)
@@ -413,26 +413,28 @@ function loadEvents() {
       
       allEvents = rows.map(function(r) {
         if (isBilingual) {
-          // Bilingual format: date, title_en, title_pt, category, time, desc_en, desc_pt, link
+          // Bilingual format: date, title_en, title_pt, category, time, end_time, desc_en, desc_pt, link
           var titleIdx = LANG === 'pt' ? 2 : 1;  // title_pt is col 2, title_en is col 1
-          var descIdx = LANG === 'pt' ? 6 : 5;   // desc_pt is col 6, desc_en is col 5
+          var descIdx = LANG === 'pt' ? 7 : 6;   // desc_pt is col 7, desc_en is col 6
           return {
             date: r[0] || '',
             title: r[titleIdx] || r[1] || '',  // fallback to English if PT missing
             category: (r[3] || 'special').toLowerCase(),
             time: r[4] || '',
-            desc: r[descIdx] || r[5] || '',    // fallback to English if PT missing
-            link: r[7] || ''
+            end_time: r[5] || '',  // NEW: end time column
+            desc: r[descIdx] || r[6] || '',    // fallback to English if PT missing
+            link: r[8] || ''
           };
         } else {
-          // Single-language format (backward compatible): date, title, category, time, desc, link
+          // Single-language format (backward compatible): date, title, category, time, end_time, desc, link
           return {
             date: r[0] || '',
             title: r[1] || '',
             category: (r[2] || 'special').toLowerCase(),
             time: r[3] || '',
-            desc: r[4] || '',
-            link: r[5] || ''
+            end_time: r[4] || '',  // NEW: end time column
+            desc: r[5] || '',
+            link: r[6] || ''
           };
         }
       }).filter(function(e) { return e.date && e.title; });
@@ -534,7 +536,13 @@ function renderSidebar() {
     var linkHtml = ev.link
       ? '<a class="ev-link" href="' + ev.link + '" target="_blank" rel="noopener">' + T.moreInfo + ' ›</a>'
       : '';
-    var metaStr = (ev.time ? ev.time + (ev.desc ? ' · ' : '') : '') + ev.desc;
+    
+    // Format time: show "18:00 - 23:00" if end_time exists, otherwise just "18:00"
+    var timeStr = '';
+    if (ev.time) {
+      timeStr = ev.end_time ? ev.time + ' – ' + ev.end_time : ev.time;
+    }
+    var metaStr = (timeStr ? timeStr + (ev.desc ? ' · ' : '') : '') + ev.desc;
     card.innerHTML =
       '<div class="sb-date">' +
         '<span class="sb-day">' + dd + '</span>' +
