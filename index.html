@@ -29,21 +29,40 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;height:4px;
   padding:0 1.25rem;display:flex;flex-direction:column;align-items:center}
 .header{padding:3rem 0 2rem;display:flex;flex-direction:column;align-items:center;
   text-align:center;opacity:0;animation:fadeUp 0.6s 0.05s ease forwards}
-.logo-wrap{margin-bottom:1.4rem;overflow:hidden;width:100%}
+.logo-wrap{margin-bottom:0;overflow:hidden;width:100%}
 .logo-wrap img{width:calc(100% + 0.4rem);height:auto;display:block;
   border-radius:10px;margin-left:-0.2rem;margin-right:-0.2rem}
 .venue-sub{font-size:.7rem;font-weight:500;letter-spacing:.25em;
-  text-transform:uppercase;color:var(--yellow);margin-bottom:.6rem}
+  text-transform:uppercase;color:var(--yellow);margin-bottom:.6rem;margin-top:-.4rem}
 .venue-desc{font-size:.95rem;font-weight:300;color:var(--text-muted);
   line-height:1.65;max-width:280px}
-.status-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;
-  border-radius:20px;background:rgba(90,200,122,0.15);border:1px solid rgba(90,200,122,0.45);
-  font-size:.68rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
-  color:#7EDBA0;margin-top:.85rem}
-.status-dot{width:6px;height:6px;border-radius:50%;background:#7EDBA0;animation:pulse 2s infinite}
 .section-label{align-self:flex-start;font-size:.65rem;font-weight:600;
   letter-spacing:.22em;text-transform:uppercase;color:var(--yellow);
   margin:1.6rem 0 .65rem;padding-left:2px;opacity:.85}
+.hours-bar{width:100%;background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:12px;padding:14px 14px 12px;margin-top:-.9rem;margin-bottom:1.4rem;
+  backdrop-filter:blur(4px);opacity:0;animation:fadeUp 0.5s 0.15s ease forwards}
+.hb-top{display:flex;align-items:baseline;justify-content:space-between;
+  margin-bottom:10px;padding:0 2px}
+.hb-label{font-size:.6rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--yellow);opacity:.85}
+.hb-week{font-size:.65rem;font-weight:300;color:var(--text-dim);letter-spacing:.04em}
+.hb-cells{display:flex;gap:0}
+.hb-cell{flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:4px 2px;border-right:1px solid rgba(255,255,255,0.08);min-width:0}
+.hb-cell:last-child{border-right:none}
+.hb-cell.today{background:var(--yellow-dim);border-radius:6px;
+  border-right-color:transparent}
+.hb-cell.today + .hb-cell{border-left:1px solid transparent}
+.hb-day{font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-dim);margin-bottom:3px}
+.hb-cell.today .hb-day{color:var(--yellow)}
+.hb-stack-line{display:block;font-size:.62rem;font-weight:500;color:var(--text);
+  line-height:1.35;white-space:nowrap}
+.hb-stack-line.cl{color:var(--text-dim);font-style:italic;font-weight:300}
+.hb-cell.today .hb-stack-line{color:var(--yellow)}
+.hb-loading{font-size:.7rem;color:var(--text-dim);font-style:italic;
+  text-align:center;width:100%;padding:8px 0}
 .links{width:100%;display:flex;flex-direction:column;gap:.55rem}
 .link-card{display:flex;align-items:center;gap:14px;padding:14px 16px;
   background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;
@@ -83,7 +102,6 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;height:4px;
 .footer-copy a{color:rgba(255,255,255,0.38);text-decoration:none}
 .footer-copy a:hover{color:var(--yellow)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 </style>
 </head>
 <body>
@@ -94,37 +112,28 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;height:4px;
   </div>
   <p class="venue-sub">Estádio da Tapadinha &middot; Alcântara</p>
   <p class="venue-desc">Food, football &amp; views of the Tejo.<br>Home of Atlético Clube de Portugal.</p>
-  <span class="status-pill"><span class="status-dot"></span>Fri &middot; Sat &middot; Sun</span>
 </header>
 
+<div class="hours-bar">
+  <div class="hb-top">
+    <span class="hb-label">This week's hours</span>
+    <span class="hb-week" id="hours-week-range"></span>
+  </div>
+  <div class="hb-cells" id="hours-body"><span class="hb-loading">Loading…</span></div>
+</div>
+
 <div class="links">
-  <span class="section-label">The club</span>
 
   <a class="link-card" href="https://www.atletico.store/" target="_blank" rel="noopener"
-     style="--accent:#F5C518;--icon-bg:rgba(245,197,24,0.15)">
+     style="--accent:#FF4060;--icon-bg:rgba(200,0,30,0.18)">
     <span class="icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#F5C518" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#FF4060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
         <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/>
       </svg>
     </span>
     <span class="link-text">
       <span class="link-name">Merch store</span>
       <span class="link-hint">Official Atlético CP gear</span>
-    </span>
-    <svg class="link-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-  </a>
-
-  <a class="link-card" href="https://atletico.tribeirl.com/" target="_blank" rel="noopener"
-     style="--accent:#FF4060;--icon-bg:rgba(200,0,30,0.18)">
-    <span class="icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#FF4060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
-        <path d="M13 5v2M13 17v2M13 11v2"/>
-      </svg>
-    </span>
-    <span class="link-text">
-      <span class="link-name">Buy tickets</span>
-      <span class="link-hint">Book your seat for the next match</span>
     </span>
     <svg class="link-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
   </a>
@@ -144,9 +153,6 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;height:4px;
     <svg class="link-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
   </a>
 
-  <div class="rule"></div>
-  <span class="section-label">Your experience</span>
-
   <a class="link-card" href="https://search.google.com/local/writereview?placeid=ChIJcxHEZAA1GQ0RgmLRgBHjgUk"
      style="--accent:#F5C518;--icon-bg:rgba(245,197,24,0.15)">
     <span class="icon-wrap">
@@ -157,21 +163,6 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;height:4px;
     <span class="link-text">
       <span class="link-name">Leave a review</span>
       <span class="link-hint">Tell us what you thought</span>
-    </span>
-    <svg class="link-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-  </a>
-
-  <a class="link-card" href="#newsletter"
-     style="--accent:#FF4060;--icon-bg:rgba(200,0,30,0.18)">
-    <span class="icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#FF4060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="4" width="20" height="16" rx="2"/>
-        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-      </svg>
-    </span>
-    <span class="link-text">
-      <span class="link-name">Join the mailing list</span>
-      <span class="link-hint">Events, news &amp; offers to your inbox</span>
     </span>
     <svg class="link-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
   </a>
@@ -199,39 +190,100 @@ const LANG=(navigator.language||'en').toLowerCase().startsWith('pt')?'pt':'en';
 const T={
   en:{sub:'Estádio da Tapadinha · Alcântara',
       desc:'Food, football & views of the Tejo.<br>Home of Atlético Clube de Portugal.',
-      status:'Fri · Sat · Sun',label1:'The club',label2:'Your experience',
+      hoursLabel:"This week's hours",
+      months:['January','February','March','April','May','June','July','August','September','October','November','December'],
+      dayAbbr:{Monday:'Mon',Tuesday:'Tue',Wednesday:'Wed',Thursday:'Thu',Friday:'Fri',Saturday:'Sat',Sunday:'Sun'},
+      closed:'Closed',
       merch:'Merch store',merch_h:'Official Atlético CP gear',
-      tickets:'Buy tickets',tickets_h:'Book your seat for the next match',
       events:'Events calendar',events_h:'Fixtures, live nights & more',
       review:'Leave a review',review_h:'Tell us what you thought',
-      mail:'Join the mailing list',mail_h:'Events, news & offers to your inbox',
       footer:'Estadio da Tapadinha · 1300-604 Lisboa'},
   pt:{sub:'Estádio da Tapadinha · Alcântara',
       desc:'Comida, futebol e vistas do Tejo.<br>Casa do Atlético Clube de Portugal.',
-      status:'Sex · Sáb · Dom',label1:'O clube',label2:'A tua experiência',
+      hoursLabel:'Horário desta semana',
+      months:['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+      dayAbbr:{Monday:'Seg',Tuesday:'Ter',Wednesday:'Qua',Thursday:'Qui',Friday:'Sex',Saturday:'Sáb',Sunday:'Dom'},
+      closed:'Fechado',
       merch:'Loja oficial',merch_h:'Artigos oficiais do Atlético CP',
-      tickets:'Comprar bilhetes',tickets_h:'Reserva o teu lugar no próximo jogo',
       events:'Agenda de eventos',events_h:'Jogos, noites ao vivo e mais',
       review:'Deixa uma avaliação',review_h:'Diz-nos o que achaste',
-      mail:'Subscrever newsletter',mail_h:'Eventos, novidades e ofertas na tua caixa',
       footer:'Estádio da Tapadinha · 1300-604 Lisboa'}
 };
 const t=T[LANG];
+
+// Hours: same Google Sheet as the calendar
+const HOURS_CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vQlnvGdph2Y_jYWCnQ-OZcH7TGwFuNvLJ76DjwJlxc9eSj5ySerbDV3ae1eQu3_xbJYnpYXUeNjpbS8/pub?gid=595431382&single=true&output=csv';
+const DEMO_HOURS=[
+  ['Monday','Closed',''],['Tuesday','Closed',''],
+  ['Wednesday','12:00','22:00'],['Thursday','12:00','22:00'],
+  ['Friday','14:00','23:00'],['Saturday','12:00','23:00'],
+  ['Sunday','12:00','21:00']
+];
+const DAY_FULL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DAY_ORDER=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+function parseCSV(csv){
+  const lines=csv.trim().split('\n').slice(1);
+  return lines.map(line=>{
+    const cols=[];let cur='',inQ=false;
+    for(let i=0;i<line.length;i++){
+      if(line[i]==='"'){inQ=!inQ;continue;}
+      if(line[i]===','&&!inQ){cols.push(cur.trim());cur='';}
+      else cur+=line[i];
+    }
+    cols.push(cur.trim());
+    return cols;
+  }).filter(r=>r.length&&r[0]);
+}
+
+function weekRangeLabel(){
+  const now=new Date(),dow=now.getDay();
+  const mon=new Date(now);mon.setDate(now.getDate()-((dow+6)%7));
+  const sun=new Date(mon);sun.setDate(mon.getDate()+6);
+  const fmt=d=>t.months[d.getMonth()].slice(0,3)+' '+d.getDate();
+  return fmt(mon)+' – '+fmt(sun);
+}
+
+function renderHours(rows){
+  const todayName=DAY_FULL[new Date().getDay()];
+  document.getElementById('hours-week-range').textContent=weekRangeLabel();
+  const lookup={};
+  rows.forEach(r=>{if(r[0])lookup[r[0].trim()]={open:r[1]||'',close:r[2]||''};});
+  let html='';
+  DAY_ORDER.forEach(day=>{
+    const h=lookup[day]||{open:'Closed',close:''};
+    const closed=h.open.toLowerCase()==='closed'||!h.open;
+    const isToday=day===todayName;
+    const stacked=closed
+      ? '<span class="hb-stack-line cl">'+t.closed+'</span>'
+      : '<span class="hb-stack-line">'+h.open+'</span>'+
+        (h.close?'<span class="hb-stack-line">'+h.close+'</span>':'');
+    html+='<div class="hb-cell'+(isToday?' today':'')+'">'+
+      '<span class="hb-day">'+t.dayAbbr[day]+'</span>'+stacked+'</div>';
+  });
+  document.getElementById('hours-body').innerHTML=html;
+}
+
+function loadHours(){
+  fetch(HOURS_CSV_URL)
+    .then(r=>r.text())
+    .then(txt=>renderHours(parseCSV(txt)))
+    .catch(()=>renderHours(DEMO_HOURS));
+}
+
 document.addEventListener('DOMContentLoaded',()=>{
   document.documentElement.lang=LANG;
   document.querySelector('.venue-sub').textContent=t.sub;
   document.querySelector('.venue-desc').innerHTML=t.desc;
-  document.querySelector('.status-pill').innerHTML='<span class="status-dot"></span>'+t.status;
-  const labels=document.querySelectorAll('.section-label');
-  labels[0].textContent=t.label1;labels[1].textContent=t.label2;
+  document.querySelector('.hb-label').textContent=t.hoursLabel;
   const names=document.querySelectorAll('.link-name');
   const hints=document.querySelectorAll('.link-hint');
-  [[t.merch,t.merch_h],[t.tickets,t.tickets_h],[t.events,t.events_h],
-   [t.review,t.review_h],[t.mail,t.mail_h]].forEach(([n,h],i)=>{
+  [[t.merch,t.merch_h],[t.events,t.events_h],[t.review,t.review_h]].forEach(([n,h],i)=>{
     if(names[i])names[i].textContent=n;if(hints[i])hints[i].textContent=h;
   });
   document.querySelector('.footer-copy').innerHTML=
     t.footer+'<br><a href="https://www.curvapt.com/">curvapt.com</a>';
+  loadHours();
 });
 </script>
 </body>
