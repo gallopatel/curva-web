@@ -210,8 +210,13 @@ body{font-family:'Outfit',sans-serif;display:flex;flex-direction:column;
 </div>
 
 <script>
-// Language detection
-var LANG = (navigator.language || 'en').toLowerCase().startsWith('pt') ? 'pt' : 'en';
+// Language detection: ?lang= URL param wins (set by Wix embed),
+// otherwise fall back to browser language.
+var LANG = (function() {
+  var urlLang = new URLSearchParams(window.location.search).get('lang');
+  if (urlLang === 'pt' || urlLang === 'en') return urlLang;
+  return (navigator.language || 'en').toLowerCase().startsWith('pt') ? 'pt' : 'en';
+})();
 
 var I18N = {
   en: {
